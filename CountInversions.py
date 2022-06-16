@@ -1,6 +1,6 @@
 """
 Stanford - Divide and Conquer Algorithms - Challenge 2
-by James Kwon Lee (6.15.22)
+by James Kwon Lee (v2. 6.16.22)
 
 Task: Count Inversions from a list of numbers generated from a .txt file.
 - Create a Divide and Conquer Algorithm
@@ -12,91 +12,75 @@ Pseudocode for counting Split-Inversions:
     if left array element is larger than right array element,
         the remaining elements of the left array count towards split-inversion count.
 
+v2.0 Updates:
+- Removed Python's sort subroutine as sorting is implicit when merge_sort_split_array is called recursively
+    - Personal note: I needed to understand recursion and how calls are stacked.
+- Refactored count_left and count_right into a single, modular function.
+- Placed all recursive calls into a count_inversions function, which allows for the division of arrays at each call.
+- Result: Running Time Improved from 3-minutes-30-seconds to <.50-seconds
+
+The Final Answer from 100,000 numbers text file is: 2407905288 Inversions
 """
 
 
 def main():
     array_a = open("IntegerArray.txt").readlines()
     array_a = list(map(int, array_a))
+    result = total_count(array_a)
+    print("Inversion Count: ", result)
+    return result
 
-    sorted_b, x = count_and_sort_b(array_a)
-    sorted_c, y = count_and_sort_c(array_a)
-    z = merge_split_array(sorted_b, sorted_c)
+
+def total_count(array):
+    return count_inversions(array)[1]
+
+
+def count_inversions(array):
+    # Base Case
+    if len(array) <= 1:
+        return array, 0
+
+    midpoint = len(array) // 2
+
+    # Recursive Calls to count left, right, and split inversions
+    array_b, x = count_inversions(array[:midpoint])
+    array_c, y = count_inversions(array[midpoint:])
+    new_array, z = merge_sort_split_array(array_b, array_c)
 
     total_inversions = x + y + z
-    print("total_inversions: ", total_inversions)
-    return total_inversions
+
+    return new_array, total_inversions
 
 
-def count_and_sort_b(array):
-    n = len(array)//2
-    array_b = array[:n]
+def merge_sort_split_array(array_left, array_right):
 
-    if n <= 1:
-        return array_b, 0
-
-    x = 0
-
-    for i in range(0, len(array_b) - 1):
-        for j in range(i + 1, len(array_b)):
-            if array_b[j] < array_b[i]:
-                x += 1
-    sort(array_b)
-
-    return array_b, x
-
-
-def count_and_sort_c(array):
-    n = len(array) // 2
-    array_c = array[n:]
-
-    if n <= 1:
-        return array_c, 0
-
-    y = 0
-
-    for i in range(0, len(array_c) - 1):
-        for j in range(i + 1, len(array_c)):
-            if array_c[i] > array_c[j]:
-                y += 1
-
-    sort(array_c)
-
-    return array_c, y
-
-
-def sort(array):
-    # update with a faster sorting algorithm in the future
-    sorted_array = array.sort()
-
-    return sorted_array
-
-
-def merge_split_array(sorted_left, sorted_right):
-
-    n = len(sorted_right)
-    m = len(sorted_left)
+    n = len(array_right)
+    m = len(array_left)
     z = 0
     array_d = []
     i = 0
     j = 0
 
     while j < n and i < m:
-        if sorted_left[i] < sorted_right[j]:
-            array_d.append(sorted_left[i])
+        if array_left[i] < array_right[j]:
+            array_d.append(array_left[i])
             i += 1
-        elif sorted_right[j] < sorted_left[i]:
-            array_d.append(sorted_right[j])
-            z += len(sorted_left[i:])
+        elif array_right[j] < array_left[i]:
+            array_d.append(array_right[j])
+            z += len(array_left) - i
             j += 1
         else:
-            array_d.append(sorted_left[i])
-            array_d.append(sorted_right[j])
-            z += len(sorted_left[i:]) - 1
+            array_d.append(array_left[i])
+            array_d.append(array_right[j])
+            z += len(array_left[i:]) - 1
             i += 1
             j += 1
 
-    return z
+    # Adds any remaining elements back to array_d
+    array_d += array_left[i:]
+    array_d += array_right[j:]
+
+    return array_d, z
 
 
 if __name__ == '__main__':
