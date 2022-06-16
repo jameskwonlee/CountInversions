@@ -1,6 +1,7 @@
 # Count Inversions
 
 by James Kwon Lee (06.15.22)
+- updated 6.16.22
 
 ### Introduction: 
 - <strong>Inversions</strong> in a sequence is a pair of elements that are out of their natural order (in our case, out of chronological order). 
@@ -17,6 +18,6 @@ by James Kwon Lee (06.15.22)
 - In console, type: `python CountInversions.py` to run code.
 
 ### Future direction:
-- In my next pass, I need to call the left and right array count functions recursively. 
-- Sorting seems implicit when Merge_Sort_Split_Array is called, so there's no need to do it within the left and right functions. 
-- I'd like to explore different data structures to organize and sort the large list of numbers. 
+- ~~In my next pass, I need to call the left and right array count functions recursively.~~
+- ~~Sorting seems implicit when Merge_Sort_Split_Array is called, so there's no need to do it within the left and right functions.~~ 
+- Explore different data structures to organize, sort, and count inversions of the large list of numbers. 
